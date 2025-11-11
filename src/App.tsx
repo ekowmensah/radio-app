@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 // @ts-ignore - Radio is used in error fallback HTML string
-import { Play, Pause, Volume2, VolumeX, Radio, Circle, Phone, MessageCircle, Mail, Facebook, Twitter, Instagram, Youtube, Linkedin } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, Radio, Circle, Phone, MessageCircle, Mail, Facebook, Twitter, Instagram, Youtube, Linkedin, Download, X } from 'lucide-react'
 
 function App() {
   // Radio station configuration
@@ -22,7 +22,7 @@ function App() {
   
   // Contact configuration - Update these with your actual contact details
   const PHONE_NUMBER = '+233303937199'
-  const WHATSAPP_NUMBER = '+233123456789'
+  const WHATSAPP_NUMBER = '+233545017083'
   const SMS_NUMBER = '+233545017083'
   const WHATSAPP_MESSAGE = 'Hello! I am listening to Hope FM 99.9Mhz.'
   
@@ -42,6 +42,8 @@ function App() {
   const [isRecording, setIsRecording] = useState(false)
   const [recordingTime, setRecordingTime] = useState(0)
   const [currentProgram, setCurrentProgram] = useState({ name: 'Loading...', host: '' })
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const recordingIntervalRef = useRef<number | null>(null)
@@ -96,6 +98,39 @@ function App() {
 
     return () => clearInterval(interval)
   }, [])
+
+  // PWA Install Prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+      setShowInstallPrompt(true)
+    }
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt')
+    }
+    
+    setDeferredPrompt(null)
+    setShowInstallPrompt(false)
+  }
+
+  const handleDismissInstall = () => {
+    setShowInstallPrompt(false)
+  }
 
   const togglePlay = async () => {
     if (!audioRef.current) return
@@ -229,6 +264,34 @@ function App() {
         onError={handleError}
         preload="none"
       />
+
+      {/* PWA Install Prompt */}
+      {showInstallPrompt && (
+        <div className="fixed top-4 left-4 right-4 z-50 animate-slide-down">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 flex items-center gap-3 border-2 border-blue-500">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Download className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-gray-900 text-sm">Install Hope FM App</h3>
+              <p className="text-xs text-gray-600">Get quick access and listen offline!</p>
+            </div>
+            <button
+              onClick={handleInstallClick}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors"
+            >
+              Install
+            </button>
+            <button
+              onClick={handleDismissInstall}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+              aria-label="Dismiss"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="w-full max-w-lg">
         {/* Main Player Card */}

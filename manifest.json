@@ -1,0 +1,32 @@
+{
+  "name": "Hope FM - 99.9Mhz",
+  "short_name": "Hope FM",
+  "description": "Listen to Hope FM 99.9Mhz - Enidaso Fie! Your favorite radio station.",
+  "start_url": "/radioapp/",
+  "display": "standalone",
+  "background_color": "#1e40af",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/radioapp/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/radioapp/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/radioapp/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "screenshots": []
+}
