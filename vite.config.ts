@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/radioapp/',
+  base: '/radioapp/', // For XAMPP localhost deployment
   build: {
     outDir: 'dist',
     emptyOutDir: true
